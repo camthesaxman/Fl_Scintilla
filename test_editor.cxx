@@ -141,11 +141,11 @@ static const char *plus_xpm[] = {
 
 //
 const size_t FUNCSIZE=2;
-char* g_szFuncList[FUNCSIZE]= { //函数名
+const char* g_szFuncList[FUNCSIZE]= { //函数名
 	"file-",
 	"MoveWindow("
 };
-char* g_szFuncDesc[FUNCSIZE]= { //函数信息
+const char* g_szFuncDesc[FUNCSIZE]= { //函数信息
 	"HWND CreateWindow-"
 	"LPCTSTR lpClassName,"
 	" LPCTSTR lpWindowName,"
@@ -218,7 +218,7 @@ static void cb_editor(Scintilla::SCNotification *scn, void *data)
 			if(pEnd == NULL) //没有下一个参数啦，关闭提示
 				editor->SendEditor(SCI_CALLTIPCANCEL);
 			else {
-				printf("show param, %d %d\n", pStart-pCallTipCurDesc, pEnd-pCallTipCurDesc);
+				printf("show param, %li %li\n", pStart-pCallTipCurDesc, pEnd-pCallTipCurDesc);
 				editor->SendEditor(SCI_CALLTIPSETHLT,pStart-pCallTipCurDesc, pEnd-pCallTipCurDesc);
 				pCallTipNextWord = pEnd+1;
 			}
@@ -259,6 +259,7 @@ static void cb_editor(Scintilla::SCNotification *scn, void *data)
 }
 int main(int argc, char **argv)
 {
+#ifdef _WIN32
 	HDC hdc = GetDC(NULL);
 	if (hdc)
 	{
@@ -271,6 +272,7 @@ int main(int argc, char **argv)
 
 		printf("dpi x, y:%d %d\n", x, y);
 	}
+#endif
 
 	Fl::get_system_colors();
 
@@ -287,7 +289,7 @@ int main(int argc, char **argv)
 		editor->SendEditor(SCI_SETMARGINTYPEN,2, SC_MARGIN_NUMBER);
 		editor->SendEditor(SCI_SETMARGINWIDTHN,2, 20);
 
-		char *sss = "file\n";
+		const char *sss = "file\n";
 		editor->SendEditor(SCI_APPENDTEXT, strlen(sss), (sptr_t)sss);
 
 		const char* szKeywords1=

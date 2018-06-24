@@ -65,7 +65,8 @@
 #undef PLAT_MACOSX
 #define PLAT_MACOSX 1
 
-#else
+#elif defined(_WIN32)
+
 #undef PLAT_WIN
 #define PLAT_WIN 1
 

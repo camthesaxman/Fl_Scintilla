@@ -3,6 +3,7 @@
 #ifndef FL_SCINTILLA_H
 #define FL_SCINTILLA_H
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -189,11 +190,7 @@ protected:
 	static void cb_popmenu(Fl_Widget *widget, void *data)
 	{
 		Fl_Scintilla *sci = (Fl_Scintilla *)(widget->user_data());
-#if __FLTK_MACOSX__ || __FLTK_IPHONEOS__
-		int cmd = (uintptr_t)data;
-#else
-		int cmd = (int)data;
-#endif
+		int cmd = (intptr_t)data;
 		sci->Command(cmd);
 	}
 	virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true)
@@ -203,14 +200,14 @@ protected:
 		if (!label[0]) {
 			//m->add("_");
 		} else if (enabled) {
-			if ( strcmp(label, "Redo") == 0 ) m->add(label, 0, cb_popmenu, (void*)cmd, FL_MENU_DIVIDER); 
-			else if ( strcmp(label, "Delete") == 0 ) m->add(label, 0, cb_popmenu, (void*)cmd, FL_MENU_DIVIDER);
-			else m->add(label, 0, cb_popmenu, (void*)cmd);
+			if ( strcmp(label, "Redo") == 0 ) m->add(label, 0, cb_popmenu, (void*)(intptr_t)cmd, FL_MENU_DIVIDER); 
+			else if ( strcmp(label, "Delete") == 0 ) m->add(label, 0, cb_popmenu, (void*)(intptr_t)cmd, FL_MENU_DIVIDER);
+			else m->add(label, 0, cb_popmenu, (void*)(intptr_t)cmd);
 			//m->add(label, 0, cb_popmenu, (void*)cmd);
 		} else {
-			if ( strcmp(label, "Redo") == 0 ) m->add(label, 0, cb_popmenu, (void*)cmd, FL_MENU_INACTIVE|FL_MENU_DIVIDER); 
-			else if ( strcmp(label, "Delete") == 0 ) m->add(label, 0, cb_popmenu, (void*)cmd, FL_MENU_INACTIVE|FL_MENU_DIVIDER);
-			else m->add(label, 0, cb_popmenu, (void*)cmd, FL_MENU_INACTIVE);
+			if ( strcmp(label, "Redo") == 0 ) m->add(label, 0, cb_popmenu, (void*)(intptr_t)cmd, FL_MENU_INACTIVE|FL_MENU_DIVIDER); 
+			else if ( strcmp(label, "Delete") == 0 ) m->add(label, 0, cb_popmenu, (void*)(intptr_t)cmd, FL_MENU_INACTIVE|FL_MENU_DIVIDER);
+			else m->add(label, 0, cb_popmenu, (void*)(intptr_t)cmd, FL_MENU_INACTIVE);
 			//m->add(label, 0, 0, 0, FL_MENU_INACTIVE);
 		}
 	}

@@ -892,7 +892,7 @@ void Fl_Scintilla::Drop()
 		Scintilla::Point pt = Scintilla::Point::FromInts(Fl::event_x()-swt_.rc_client.x, Fl::event_y()-swt_.rc_client.y);
 		Scintilla::SelectionPosition movePos = SPositionFromLocation(pt, false, false, UserVirtualSpace());
 
-		char *data = "";
+		const char *data = "";
 		int len = 0;
 		if ( Fl::event_state(FL_CTRL) != 0 ) DropAt(movePos, data, len, 0, 1);
 		else DropAt(movePos, data, len, 1, 1);

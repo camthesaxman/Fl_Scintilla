@@ -91,7 +91,7 @@ public:
 		return Open("UTF-8", "");
 	}
 
-	unsigned char OpenFromCodepage(int codepage, char *to)
+	unsigned char OpenFromCodepage(int codepage, const char *to)
 	{
 		if ( codepage == 936   ) return Open("GB18030", to); // SC_CHARSET_GB2312
 		if ( codepage == 950   ) return Open("BIG5", to); // SC_CHARSET_CHINESEBIG5 繁体中文
@@ -114,7 +114,7 @@ public:
 		return Open("", to);
 	}
 
-	unsigned char OpenToCodepage(char *from, int codepage)
+	unsigned char OpenToCodepage(const char *from, int codepage)
 	{
 		if ( codepage == 936   ) return Open(from, "GB18030"); // SC_CHARSET_GB2312
 		if ( codepage == 950   ) return Open(from, "BIG5"); // SC_CHARSET_CHINESEBIG5 繁体中文
@@ -141,31 +141,19 @@ public:
 	{
 		Close();
 		cd = iconv_open(to_charset, from_charset);
-#if __FLTK_MACOSX__ || __FLTK_IPHONEOS__
-		if ( (uintptr_t)cd > 0 ) return 1;
-#else
-		if ( (int)cd > 0 ) return 1;
-#endif
+		if ( cd != (iconv_t)-1 ) return 1;
 		return 0;
 	}	
 
 	void Close()
 	{
-#if __FLTK_MACOSX__ || __FLTK_IPHONEOS__
-		if ( (uintptr_t)cd > 0 ) iconv_close(cd);
-#else
-		if ( (int)cd > 0 ) iconv_close(cd);
-#endif
+		if ( cd != (iconv_t)-1 ) iconv_close(cd);
 		cd = 0;
 	}
 
-	int GetLength(char *src, int len)
+	int GetLength(const char *src, int len)
 	{
-#if __FLTK_MACOSX__ || __FLTK_IPHONEOS__
-		if ( (uintptr_t)cd > 0 ) {
-#else
-		if ( (int)cd > 0 ) {
-#endif
+		if ( cd != (iconv_t)-1 ) {
 			if ( len < 1 ) return 0;
 			int outlen=len*8;
 			void *p;
@@ -183,18 +171,14 @@ public:
 		return 0;
 	}
 
-	int convert(char *inbuf, int inlen, char *outbuf, int outlen) 
+	int convert(const char *inbuf, size_t inlen, char *outbuf, size_t outlen) 
 	{
-		char **pin = &inbuf;
+		const char **pin = &inbuf;
 		char **pout = &outbuf;
-		int len = outlen;
+		size_t len = outlen;
 
-#if __FLTK_MACOSX__ || __FLTK_IPHONEOS__
-		if ( (uintptr_t)cd > 0 ) {
-#else
-		if ( (int)cd > 0 ) {
-#endif
-			int r = iconv(cd,(const char**)pin,(size_t *)&inlen,pout,(size_t *)&len);
+		if ( cd != (iconv_t)-1 ) {
+			int r = iconv(cd,(const char**)pin,&inlen,pout,&len);
 			if ( r < 0 ) return 0;
 			return outlen-len;
 		} else {
